@@ -48,7 +48,7 @@ A/B 소재 구분이 필요하면 `comment-a` / `comment-b` 처럼 접미사.
 
 ## 3. utm_campaign
 
-- 도착지 글의 **슬러그를 그대로** 쓰는 게 1순위 (예: `hackathon-edu`, `spigen-ax-training`).
+- 도착지 글의 **슬러그를 그대로** 쓰는 게 1순위 (예: `hackathon-edu`, `webinar-202606`).
 - 슬러그가 없으면 `주제-YYMM` (예: `ax-solo-2606`).
 - 같은 콘텐츠를 여러 플랫폼에 뿌리면 **campaign은 동일**하게 유지 → GA4에서 캠페인 단위로 합산, 플랫폼별 비교는 source로.
 
@@ -74,7 +74,7 @@ Bitly Links 목록에서 **제목만 보고 비교·식별**되도록. 도착지
 
 예시:
 - `[LinkedIn·댓글] 해커톤 교육 · 260601`
-- `[YouTube·영상설명] 이랜드 AX교육 · 260601`
+- `[YouTube·영상설명] 신규 웨비나 · 260601`
 - `[Instagram·바이오] AX 빌더스 · 260601`
 
 규칙:
@@ -84,7 +84,7 @@ Bitly Links 목록에서 **제목만 보고 비교·식별**되도록. 도착지
 ## 6. Back-half (custom keyword)
 
 - **매번 사용자에게 물어본다.** (월 100개 한도 소모)
-- 쓸 경우 추천 포맷: `{campaign}-{플랫폼약자}` (예: `hackathon-li`, `eland-yt`). 영소문자·하이픈.
+- 쓸 경우 추천 포맷: `{campaign}-{플랫폼약자}` (예: `hackathon-li`, `webinar-yt`). 영소문자·하이픈.
 - 생략하면 Bitly 랜덤 코드.
 - ⚠️ **API 동작 주의**: `/custom_bitlinks`는 '랜덤 hash(부모) + 브랜드 별칭(자식)' 2개를 만들고
   별칭은 untitled로 생성된다. `bitly.py`가 자동으로 (1) 별칭에 제목·태그 이관 (2) 부모 hash를 archive

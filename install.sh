@@ -35,8 +35,11 @@ if [ -f "$CFG" ]; then
 else
   echo ""
   echo "  공유 Bitly 그룹 토큰을 입력하세요 (발급: https://app.bitly.com/settings/api/)"
+  echo "  (토큰/GROUP_GUID는 팀 관리자에게 안전 채널로 전달받으세요)"
   read -rsp "  BITLY_TOKEN: " TOKEN; echo ""
-  read -rp  "  BITLY_GROUP_GUID [Bq4tcFdJw53]: " GUID; GUID="${GUID:-Bq4tcFdJw53}"
+  read -rp  "  BITLY_GROUP_GUID: " GUID
+  [ -z "$TOKEN" ] && { echo "  ❌ 토큰 비어있음"; exit 1; }
+  [ -z "$GUID" ]  && { echo "  ❌ GROUP_GUID 비어있음"; exit 1; }
   printf 'BITLY_TOKEN=%s\nBITLY_GROUP_GUID=%s\n' "$TOKEN" "$GUID" > "$CFG"
   chmod 600 "$CFG"
   echo "  config.env 생성 완료"
