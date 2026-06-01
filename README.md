@@ -21,7 +21,7 @@ cd bitly-create
 - install 시 토큰 입력은 **선택** — 건너뛰면 아래 "초기 설정 프롬프트"로 Claude Code에서 등록 가능.
 - 규칙/스크립트 업데이트는 `git pull` 후 자동 반영(심볼릭링크) 또는 `./install.sh copy` 재실행.
 
-## 🔑 초기 설정 — 신규 사용자용 프롬프트 (토큰+GUID)
+## 초기 설정 — 신규 사용자용 프롬프트 (토큰+GUID)
 스킬 연결 후, **팀 관리자에게 안전 채널(1Password 등)로 받은** 토큰·GUID를 채워 아래를 Claude Code에 붙여넣으세요:
 
 ```text
@@ -36,7 +36,7 @@ BITLY_GROUP_GUID=여기에_받은_GUID_붙여넣기
 
 ## 사용
 Claude Code에서:
-- `이 링크 비틀리로 줄여줘 <URL>` / `/bitly-create <URL>` → 3가지 질문 후 생성
+- `이 링크 비틀리로 줄여줘 <URL>` / `/bitly-create <URL>` → 3가지 질문(플렛폼, 용도 등) 후 생성
 - `비틀리 목록 뽑아줘` → 전체 링크 md 표 (list 모드)
 
 CLI 직접:
