@@ -20,8 +20,22 @@ description: >
 - 규칙 SSOT: `$SKILL_DIR/conventions.md` — 플랫폼표·UTM·제목·back-half 규칙
 - 실행기: `$SKILL_DIR/scripts/bitly.py` (토큰/그룹은 `$SKILL_DIR/config.env` 또는 환경변수에서 자동 로드)
 
-> `config.env`가 없으면 미설치 상태. 사용자에게 `$SKILL_DIR/install.sh` 실행(또는 `config.env`에
-> `BITLY_TOKEN`/`BITLY_GROUP_GUID` 입력)을 안내한다.
+> `config.env`가 없으면 미설치 상태 → **모드 C(초기 세팅)**로 안내한다.
+
+---
+
+## 모드 C — 초기 세팅 (신규 사용자 토큰/GUID 등록)
+트리거: "비틀리/bitly 초기 설정·세팅·setup", "토큰 설정해줘", 또는 메시지에 `BITLY_TOKEN=…` /
+`BITLY_GROUP_GUID=…` 값이 포함될 때. 다른 모드 시도 중 `config.env`가 없어도 이 모드로 유도한다.
+
+1. 사용자 메시지에서 **토큰**과 **GUID** 값을 추출.
+2. 아래 실행 (토큰/그룹 유효성 검증 후 `config.env` 저장, 권한 600):
+   ```bash
+   python3 "$SKILL_DIR/scripts/bitly.py" setup --token "<토큰>" --guid "<GUID>"
+   ```
+3. 반환 JSON(account/group/마스킹 토큰)으로 **성공 보고**. 검증 실패 시(401/403) 토큰·GUID 재확인 안내.
+
+가드레일: **토큰 원문을 응답에 그대로 출력하지 않는다**(스크립트가 `****마지막4자`로 마스킹해 반환).
 
 ---
 

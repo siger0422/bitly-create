@@ -156,9 +156,40 @@ def cmd_list(args):
         print(text)
 
 
+def cmd_setup(args):
+    """토큰/GUID 유효성 검증 후 config.env 저장 (신규 사용자 초기 세팅)."""
+    token = args.token.strip()
+    guid = args.guid.strip()
+    if not token or not guid:
+        sys.exit("ERROR: --token 과 --guid 모두 필요")
+    # 1) 쓰기 전에 검증 (잘못된 값이면 저장 안 함)
+    user = api("GET", "/user", token)              # 401/403 이면 여기서 중단
+    grp = api("GET", "/groups/" + guid, token)     # 그룹 접근 권한 확인
+    # 2) config.env 저장 (권한 600)
+    with open(CONFIG, "w") as f:
+        f.write("BITLY_TOKEN=%s\nBITLY_GROUP_GUID=%s\n" % (token, guid))
+    os.chmod(CONFIG, 0o600)
+    # 3) 마스킹 보고 (토큰 원문 출력 금지)
+    print(json.dumps({
+        "ok": True,
+        "config": CONFIG,
+        "token": "****" + token[-4:],
+        "account": user.get("login"),
+        "account_name": user.get("name"),
+        "group": grp.get("name"),
+        "group_guid": grp.get("guid"),
+        "msg": "초기 세팅 완료. 이제 링크 생성/목록 사용 가능.",
+    }, ensure_ascii=False, indent=2))
+
+
 def main():
     p = argparse.ArgumentParser(description="Bitly 링크 단축 + UTM 자동화")
     sub = p.add_subparsers(dest="cmd", required=True)
+
+    s = sub.add_parser("setup", help="토큰/GUID 저장 + 검증 (초기 세팅)")
+    s.add_argument("--token", required=True)
+    s.add_argument("--guid", required=True)
+    s.set_defaults(func=cmd_setup)
 
     c = sub.add_parser("create")
     c.add_argument("--url", required=True, help="원본 도착지 URL")

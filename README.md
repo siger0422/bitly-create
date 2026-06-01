@@ -12,13 +12,27 @@
 
 ## 설치 (타 로컬에서)
 ```bash
-git clone <사내-레포-URL> bitly-create
+git clone https://github.com/siger0422/bitly-create.git
 cd bitly-create
-./install.sh            # 심볼릭링크 연결 + 공유 그룹 토큰 입력 (기본)
+./install.sh            # 심볼릭링크 연결 (+ 원하면 그 자리서 토큰 입력)
 # 또는: ./install.sh copy   # 심볼릭링크 대신 복사 설치
 ```
 - `~/.claude/skills/bitly-create` 가 이 레포를 가리키게 되고, 토큰은 `config.env`(레포 내, 커밋 안 됨)에 저장.
+- install 시 토큰 입력은 **선택** — 건너뛰면 아래 "초기 설정 프롬프트"로 Claude Code에서 등록 가능.
 - 규칙/스크립트 업데이트는 `git pull` 후 자동 반영(심볼릭링크) 또는 `./install.sh copy` 재실행.
+
+## 🔑 초기 설정 — 신규 사용자용 프롬프트 (토큰+GUID)
+스킬 연결 후, **팀 관리자에게 안전 채널(1Password 등)로 받은** 토큰·GUID를 채워 아래를 Claude Code에 붙여넣으세요:
+
+```text
+bitly-create 스킬 초기 설정해줘.
+BITLY_TOKEN=여기에_받은_토큰_붙여넣기
+BITLY_GROUP_GUID=여기에_받은_GUID_붙여넣기
+```
+
+→ 스킬이 토큰·그룹 유효성을 **검증**한 뒤 `config.env`에 저장(권한 600)하고, 계정·그룹명을 마스킹된 형태로
+보고합니다. (CLI로는 `python3 scripts/bitly.py setup --token <T> --guid <G>` 와 동일.)
+검증에 실패하면(401/403) 값을 다시 확인하세요. **모두 같은 공유 토큰**을 써야 전사 히스토리가 한곳에 모입니다.
 
 ## 사용
 Claude Code에서:

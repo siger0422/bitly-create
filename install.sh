@@ -27,29 +27,37 @@ else
   ln -s "$REPO_DIR" "$TARGET"
 fi
 
-# config.env (토큰)
+# config.env (토큰) — 선택. 건너뛰면 Claude Code 프롬프트(모드 C)로 나중에 설정 가능.
 CFG="$REPO_DIR/config.env"
 if [ "$MODE" = "copy" ]; then CFG="$TARGET/config.env"; fi
 if [ -f "$CFG" ]; then
   echo "  config.env 이미 존재 → 토큰 입력 생략"
 else
   echo ""
-  echo "  공유 Bitly 그룹 토큰을 입력하세요 (발급: https://app.bitly.com/settings/api/)"
+  echo "  토큰 설정 방법 (둘 중 하나):"
+  echo "   (A) 지금 터미널에서 입력  (B) 건너뛰고 Claude Code에서 설정 프롬프트로 입력"
   echo "  (토큰/GROUP_GUID는 팀 관리자에게 안전 채널로 전달받으세요)"
-  read -rsp "  BITLY_TOKEN: " TOKEN; echo ""
-  read -rp  "  BITLY_GROUP_GUID: " GUID
-  [ -z "$TOKEN" ] && { echo "  ❌ 토큰 비어있음"; exit 1; }
-  [ -z "$GUID" ]  && { echo "  ❌ GROUP_GUID 비어있음"; exit 1; }
-  printf 'BITLY_TOKEN=%s\nBITLY_GROUP_GUID=%s\n' "$TOKEN" "$GUID" > "$CFG"
-  chmod 600 "$CFG"
-  echo "  config.env 생성 완료"
+  read -rsp "  BITLY_TOKEN (건너뛰려면 Enter): " TOKEN; echo ""
+  if [ -n "$TOKEN" ]; then
+    read -rp  "  BITLY_GROUP_GUID: " GUID
+    [ -z "$GUID" ] && { echo "  ❌ GROUP_GUID 비어있음"; exit 1; }
+    python3 "$REPO_DIR/scripts/bitly.py" setup --token "$TOKEN" --guid "$GUID"
+  fi
 fi
 
-# 검증
+# 검증 / 안내
 echo ""
-echo "▶ 검증: list 모드 (최근 3건)"
-python3 "$REPO_DIR/scripts/bitly.py" list --size 3 --max 3 || {
-  echo "  ⚠️ 검증 실패 — 토큰/네트워크 확인"; exit 1; }
-
-echo ""
-echo "✅ 설치 완료. Claude Code에서 \"이 링크 비틀리로 줄여줘\" 또는 /bitly-create <URL> 로 사용."
+if [ -f "$CFG" ]; then
+  echo "▶ 검증: list 모드 (최근 3건)"
+  python3 "$REPO_DIR/scripts/bitly.py" list --size 3 --max 3 \
+    || echo "  ⚠️ 검증 실패 — 토큰/네트워크 확인 (Claude Code 설정 프롬프트로 재설정 가능)"
+  echo ""
+  echo "✅ 설치 완료. Claude Code에서 \"이 링크 비틀리로 줄여줘\" 또는 /bitly-create <URL> 로 사용."
+else
+  echo "✅ 스킬 연결 완료 (토큰 미설정). Claude Code에 아래 프롬프트를 붙여 초기 설정하세요:"
+  echo "   ─────────────────────────────────────────────"
+  echo "   bitly-create 스킬 초기 설정해줘."
+  echo "   BITLY_TOKEN=<받은 토큰>"
+  echo "   BITLY_GROUP_GUID=<받은 GUID>"
+  echo "   ─────────────────────────────────────────────"
+fi
